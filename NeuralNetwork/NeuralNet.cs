@@ -14,19 +14,10 @@ namespace NeuralNetwork
         {
             ErrorFunc = errorFunc;
             Layers = new Layer[neuronsPerLayer.Length];
-            for(int i = 0; i < Layers.Length; i ++)
+            Layers[0] = new Layer(activationFunction, neuronsPerLayer[0], null);
+            for(int i = 1; i < Layers.Length; i ++)
             {
-                Layers[i] = new Layer(,);
-
-                ///////Dont forget to actually use the activation function in all of the computes
-                //////
-                //////
-                //////
-                ////
-                /////
-                /////
-                ////
-                /////
+                Layers[i] = new Layer(activationFunction, neuronsPerLayer[i], Layers[i-1]);
             }
         }
 
@@ -42,13 +33,13 @@ namespace NeuralNetwork
         public double[] Compute(double[] inputs)
         {
             double[] returnVals = new double[inputs.Length];
-            for()
+            for(int i = 0; i < inputs.Length; i ++)
             {
-
+                Layers[0].Neurons[i].Input = inputs[i];
             }
+            returnVals = Layers[Layers.Length - 1].Compute();
 
-
-
+            return returnVals;
         }
     }
 }

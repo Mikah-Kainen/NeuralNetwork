@@ -39,7 +39,7 @@ namespace NeuralNetwork
             double[] returnVal = new double[Neurons.Length];
             for(int i = 0; i < Neurons.Length; i ++)
             {
-                returnVal[i] = Neurons[i].Compute();
+                returnVal[i] = Neurons[i].Output;
             }
 
             return returnVal;

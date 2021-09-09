@@ -8,7 +8,7 @@ namespace NeuralNetwork
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
-
+            NeuralNet Net = new NeuralNet(,);
         }
     }
 }
