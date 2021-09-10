@@ -6,22 +6,8 @@ namespace NeuralNetwork
     {
         double bias; 
         Dentrite[] dentrites;
-        public double Output => ActivationFunction.Function(Input);
-        private double input;
-        public double Input {
-            get 
-            { 
-                if(dentrites.Length > 0)
-                {
-                    return Compute();
-                }
-                else
-                {
-                    return input;
-                }
-            }
-            set { input = value; }
-        }
+        public double Output { get; set; }
+        public double Input { get; private set; }
         public ActivationFunction ActivationFunction { get; set; }
 
 
@@ -55,6 +41,7 @@ namespace NeuralNetwork
             total += bias;
 
             Input = total;
+            Output = ActivationFunction.Function(total);
             return Output;
         }
     }

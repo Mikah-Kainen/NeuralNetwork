@@ -7,16 +7,32 @@ namespace NeuralNetwork
 {
     public class Layer
     {
+        public Layer PreviousLayer { get; set; }
         public Neuron[] Neurons { get; set; }
-        public double[] Outputs => Neurons.Select(n => n.Compute()).ToArray();
+        public double[] Output { get; }
 
 
         public Layer(ActivationFunction activationFunction, int numberOfNeurons, Layer previousLayer)
         {
+            Output = new double[numberOfNeurons];
             Neurons = new Neuron[numberOfNeurons];
             for(int i = 0; i < Neurons.Length; i ++)
             {
                 Neurons[i] = new Neuron(activationFunction, previousLayer.Neurons);
+            }
+
+            PreviousLayer = previousLayer;
+        }
+
+        public Layer(int numberOfNeurons)
+        {
+            PreviousLayer = null;
+            Output = new double[numberOfNeurons];
+            Neurons = new Neuron[numberOfNeurons];
+            for(int i = 0; i < numberOfNeurons; i ++)
+            {
+                Neurons[i] = new Neuron(null, new Neuron[0]);
+                Neurons[i].Output = 0;
             }
         }
 
@@ -28,21 +44,20 @@ namespace NeuralNetwork
             }
         }
             
-
-
-        /// <summary>
-        /// ///IDK if this is returning the right this maybe I should return the dentrites' computes instead
-        /// </summary>
-        /// <returns></returns>
         public double[] Compute()
         {
-            double[] returnVal = new double[Neurons.Length];
-            for(int i = 0; i < Neurons.Length; i ++)
+            if(PreviousLayer == null)
             {
-                returnVal[i] = Neurons[i].Output;
+                return Output;
             }
 
-            return returnVal;
+            PreviousLayer.Compute();
+            for(int i = 0; i < Neurons.Length; i ++)
+            {
+                Output[i] = Neurons[i].Compute();
+            }
+
+            return Output;
         }
 
     }
