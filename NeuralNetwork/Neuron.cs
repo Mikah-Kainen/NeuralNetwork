@@ -1,47 +1,62 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+
+using System;
 
 namespace NeuralNetwork
 {
     public class Neuron
     {
-        double bias; 
-        Dentrite[] dentrites;
+        public double Bias { get; set; }
+        public Dentrite[] Dentrites { get; set; }
+
+        [JsonIgnore]
         public double Output { get; set; }
+        [JsonIgnore]
         public double Input { get; private set; }
-        public ActivationFunction ActivationFunction { get; set; }
 
+        public Neuron() { }
 
-        public Neuron(ActivationFunction activationFunction, Neuron[] previousNeurons)
+        public Neuron(Neuron[] previousNeurons)
         {
-            dentrites = new Dentrite[previousNeurons.Length];
-            for(int i = 0; i < dentrites.Length; i ++)
-            {
-                dentrites[i] = new Dentrite(previousNeurons[i], this);
-            }
 
-            ActivationFunction = activationFunction;
+            Dentrites = new Dentrite[previousNeurons.Length];
+            for (int i = 0; i < Dentrites.Length; i++)
+            {
+                Dentrites[i] = new Dentrite(previousNeurons[i]);
+            }
         }
-        
+
+        public Neuron(Neuron neuron, Dentrite[] dentrites, Layer previousLayer)
+        {
+            this.Bias = neuron.Bias;
+            Dentrites = dentrites;
+            for (int i = 0; previousLayer != null && i < previousLayer.Neurons.Length; i++)
+            {
+                Dentrites[i].Previous = previousLayer.Neurons[i];
+            }
+            this.Input = neuron.Input;
+        }
+
         public void Randomize(Random random, double min, double max)
         {
-            for(int i = 0; i < dentrites.Length; i ++)
+            for (int i = 0; i < Dentrites.Length; i++)
             {
-                dentrites[i].Weight = random.NextDouble(min, max);
+                Dentrites[i].Weight = random.NextDouble(min, max);
             }
-            bias = random.NextDouble(min, max);
+            Bias = random.NextDouble(min, max);
         }
 
-        public double Compute()
+        public double Compute(ActivationFunction activationFunction)
         {
             double total = 0;
-            foreach(Dentrite dentrite in dentrites)
+            foreach (Dentrite dentrite in Dentrites)
             {
                 total += dentrite.Compute();
             }
-            total += bias;
+            total += Bias;
 
             Input = total;
-            Output = ActivationFunction.Function(total);
+            Output = activationFunction.Function(total);
             return Output;
         }
     }

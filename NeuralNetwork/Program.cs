@@ -19,7 +19,7 @@ namespace NeuralNetwork
                 2,
             };
 
-            NeuralNet Net = new NeuralNet(meanSquared, tanh, layers);
+            NeuralNet Net = new NeuralNet(ErrorFunctions.MeanSquared, ActivationFunctions.Tanh, layers);
             Random random = new Random();
             Net.Randomize(random, -1, 1);
 

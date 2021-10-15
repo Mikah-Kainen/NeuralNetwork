@@ -1,23 +1,26 @@
-﻿namespace NeuralNetwork
+﻿
+using Newtonsoft.Json;
+
+namespace NeuralNetwork
 {
     public class Dentrite
     {
         public double Weight { get; set; }
-        public Neuron Previous { get; }
-        public Neuron Next { get; }
+        
+        [JsonIgnore]
+        public Neuron Previous { get; set; }
 
+        public Dentrite() { }
 
-        public Dentrite(Neuron previous, Neuron next)
+        public Dentrite(Neuron previous)
         {
             Previous = previous;
-            Next = next;
         }
-        public Dentrite(Neuron previous, Neuron next, double weight)
-            : this(previous, next)
+        public Dentrite(Neuron previous, double weight)
+            : this(previous)
         {
             Weight = weight;
         }
-
 
         public double Compute()
         {

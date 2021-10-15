@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,20 +9,30 @@ namespace NeuralNetwork
 {
     public class Layer
     {
+        public ActivationFunctions ActivationFunction { get; set; }
+
+        [JsonIgnore]
         public Layer PreviousLayer { get; set; }
         public Neuron[] Neurons { get; set; }
-        public double[] Output { get; }
 
+        [JsonIgnore]
+        public double[] Output { get; set; }
 
-        public Layer(ActivationFunction activationFunction, int numberOfNeurons, Layer previousLayer)
+        [JsonIgnore]
+        public ActivationFunction ActivationFunc => Functions.GetActivationFunction[ActivationFunction];
+
+        public Layer() { }
+
+        public Layer(ActivationFunctions activationFunction, int numberOfNeurons, Layer previousLayer)
         {
             Output = new double[numberOfNeurons];
             Neurons = new Neuron[numberOfNeurons];
             for(int i = 0; i < Neurons.Length; i ++)
             {
-                Neurons[i] = new Neuron(activationFunction, previousLayer.Neurons);
+                Neurons[i] = new Neuron(previousLayer.Neurons);
             }
 
+            ActivationFunction = activationFunction;
             PreviousLayer = previousLayer;
         }
 
@@ -31,9 +43,10 @@ namespace NeuralNetwork
             Neurons = new Neuron[numberOfNeurons];
             for(int i = 0; i < numberOfNeurons; i ++)
             {
-                Neurons[i] = new Neuron(null, new Neuron[0]);
+                Neurons[i] = new Neuron(new Neuron[0]);
                 Neurons[i].Output = 0;
             }
+            ActivationFunction = ActivationFunctions.None;
         }
 
         public void Randomize(Random random, double min, double max)
@@ -54,7 +67,7 @@ namespace NeuralNetwork
             PreviousLayer.Compute();
             for(int i = 0; i < Neurons.Length; i ++)
             {
-                Output[i] = Neurons[i].Compute();
+                Output[i] = Neurons[i].Compute(ActivationFunc);
             }
 
             return Output;
