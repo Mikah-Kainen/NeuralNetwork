@@ -4,7 +4,7 @@ using System.Text;
 
 namespace NeuralNetwork
 {
-    static class Functions
+    public static class Functions
     {
         public static ErrorFunction MeanSquared = new ErrorFunction((double output, double desired) => (output - desired) * (output - desired), (double output, double desired) => -2 * (output - desired));
         public static ActivationFunction Tanh = new ActivationFunction(Math.Tanh, (double input) => 1 - Math.Tanh(input) * Math.Tanh(input));

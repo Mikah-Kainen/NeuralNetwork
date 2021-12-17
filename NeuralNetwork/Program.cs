@@ -8,9 +8,7 @@ namespace NeuralNetwork
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
-            ErrorFunction meanSquared = new ErrorFunction((double output, double desired) => (output-desired) * (output-desired), (double output, double desired) => -2 * (output - desired));
-            ActivationFunction tanh = new ActivationFunction(Math.Tanh, (double input) => 1 - Math.Tanh(input) * Math.Tanh(input));
-
+            //testingtestintestinsg 
             int[] layers = new int[]
             {
                 2,
