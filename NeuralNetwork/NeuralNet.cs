@@ -28,33 +28,6 @@ namespace NeuralNetwork
             }
         }
 
-        //public NeuralNet(ErrorFunctions errorFunc, ActivationFunction activationFunction, double[] serialized)
-        //{
-        //    ErrorFunction = errorFunc;
-        //    List<Layer> currentLayers = new List<Layer>();
-        //    int currentIndex = 0;
-        //    currentLayers.Add(new Layer((int)serialized[currentIndex]));
-        //    currentIndex++;
-        //    while(currentIndex < serialized.Length)
-        //    {
-        //        Layer currentLayer = new Layer(activationFunction, (int)serialized[currentIndex], currentLayers[currentLayers.Count - 1]);
-        //        currentIndex++;
-        //        for (int i = 0; i < currentLayer.Neurons.Length; i ++)
-        //        {
-        //            currentLayer.Neurons[i].Bias = serialized[currentIndex];
-        //            currentIndex++;
-        //            for(int x = 0; x < currentLayer.Neurons[i].Dentrites.Length; x ++)
-        //            {
-        //                currentLayer.Neurons[i].Dentrites[x].Weight = serialized[currentIndex];
-        //                currentIndex++;
-        //            }
-        //        }
-        //        currentLayers.Add(currentLayer);
-        //    }
-
-        //    Layers = currentLayers.ToArray();
-        //}
-
         public void Randomize(Random random, double min, double max)
         {
             for(int i = 0; i < Layers.Length; i ++)
@@ -74,6 +47,41 @@ namespace NeuralNetwork
             return returnVals;
         }
 
+        public void Cross(NeuralNet parent, Random random)
+        {
+            for(int i = 1; i < Layers.Length; i ++)
+            {
+                int crossIndex = random.Next(0, Layers[i].Neurons.Length);
+                int sideToKeep = random.Next(0, 2);
+                int left;
+                int right;
+                if (sideToKeep == 0)
+                {
+                    left = crossIndex;
+                    right = Layers[i].Neurons.Length;
+                }
+                else
+                {
+                    left = 0;
+                    right = crossIndex;
+                }
+                for (int z = left; z < right; z++)
+                {
+                    Layers[i].Neurons[z].Bias = parent.Layers[i].Neurons[z].Bias;
+                }
+            }
+        }
+
+        public void Mutate(Random random, double mutationRange)
+            //the mutated index is multiplied by a random value between positive and negative mutationRange
+        {
+            for(int i = 0; i < Layers.Length; i ++)
+            {
+                int mutateIndex = random.Next(0, Layers[i].Neurons.Length);
+                double mutationRate = random.NextDouble(-1 * mutationRange, mutationRange);
+                Layers[i].Neurons[mutateIndex].Bias *= mutationRange;
+            }
+        }
 
         //number of neurons(Layer1), neuron1, all dentrites, neuron2, all dentrites... number of neurons(Layer2), neuron1, all dentrites...
         public double[] Serialize()
