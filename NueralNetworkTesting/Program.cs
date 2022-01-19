@@ -1,12 +1,13 @@
-﻿using System;
+﻿using NeuralNetwork;
+using System;
 
-namespace NeuralNetwork
+namespace NueralNetworkTesting
 {
 
     class Program
     {
         static void Main(string[] args)
-        {
+        {\
             Console.WriteLine("Hello World!");
             //testingtestintestinsg 
             int[] layers = new int[]
@@ -21,7 +22,7 @@ namespace NeuralNetwork
             Random random = new Random();
             Net.Randomize(random, -1, 1);
 
-            var result = Net.Compute(new double[] { 1, 2});
+            var result = Net.Compute(new double[] { 1, 2 });
         }
     }
 }
