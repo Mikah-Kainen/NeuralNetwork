@@ -41,9 +41,9 @@ namespace NeuralNetwork
         {
             for (int i = 0; i < Dentrites.Length; i++)
             {
-                Dentrites[i].Weight += random.NextDouble(min, max);
+                Dentrites[i].Weight = random.NextDouble(min, max);
             }
-            Bias += random.NextDouble(min, max);
+            Bias = random.NextDouble(min, max);
         }
 
         public double Compute(ActivationFunction activationFunction)
