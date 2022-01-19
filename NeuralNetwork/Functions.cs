@@ -11,7 +11,7 @@ namespace NeuralNetwork
         public static ActivationFunction BinaryStep = new ActivationFunction(binaryStep, (double input) => 0);
         static double binaryStep(double input)
         {
-            if(input <= 0)
+            if(input < 0)
             {
                 return 0;
             }
