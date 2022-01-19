@@ -7,7 +7,7 @@ namespace NueralNetworkTesting
     class Program
     {
         static void Main(string[] args)
-        {\
+        { 
             Console.WriteLine("Hello World!");
             //testingtestintestinsg 
             int[] layers = new int[]
