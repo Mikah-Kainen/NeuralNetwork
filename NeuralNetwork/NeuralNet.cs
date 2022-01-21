@@ -72,14 +72,25 @@ namespace NeuralNetwork
             }
         }
 
-        public void Mutate(Random random, double mutationRange)
-            //the mutated index is multiplied by a random value between positive and negative mutationRange
+        public void Mutate(Random random, double mutationMin, double mutationMax)
+            //a percent of the current bias between mutationMin and mutationMax is randomly added or subtracted from the current bias to create the new bias
         {
             for(int i = 0; i < Layers.Length; i ++)
             {
                 int mutateIndex = random.Next(0, Layers[i].Neurons.Length);
-                double mutationRate = random.NextDouble(-1 * mutationRange, mutationRange);
-                Layers[i].Neurons[mutateIndex].Bias *= mutationRange;
+                double mutationRate = random.NextDouble(mutationMin, mutationMax);
+                int negativeOrPositive = random.Next(0, 2);
+                double currentBias = Layers[i].Neurons[mutateIndex].Bias;
+                double mutationValue;
+                if(negativeOrPositive == 0)
+                {
+                    mutationValue = -1 * currentBias * mutationRate;
+                }
+                else
+                {
+                    mutationValue = currentBias * mutationRate;
+                }
+                Layers[i].Neurons[mutateIndex].Bias += mutationValue;
             }
         }
 
@@ -104,6 +115,11 @@ namespace NeuralNetwork
 
 
             return returnValues.ToArray();
+        }
+
+        public void SaveToFile(string fileName)
+        {
+
         }
     }
 }
