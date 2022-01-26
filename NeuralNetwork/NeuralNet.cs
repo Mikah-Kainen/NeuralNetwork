@@ -119,7 +119,8 @@ namespace NeuralNetwork
 
         public void SaveToFile(string fileName)
         {
-
+            var json = JsonConvert.SerializeObject(this);
+            System.IO.File.WriteAllText(fileName, json);
         }
     }
 }
