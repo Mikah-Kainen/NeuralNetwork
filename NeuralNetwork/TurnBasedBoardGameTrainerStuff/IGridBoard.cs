@@ -6,14 +6,17 @@ using static NeuralNetwork.TurnBasedBoardGameTrainerStuff.Enums;
 
 namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
 {
-    public interface IGridBoard
+    public interface IGridBoard<TState> where TState : INetInput
     {
-        public IGridSquare[][] CurrentGame { get; }
-        public int YLength => CurrentGame?.Length ?? -1;
-        public int XLength => CurrentGame?[0]?.Length ?? -1;
-        //public Players PreviousPlayer { get; set; }
-        //public Players NextPlayer => GetNextPlayer[PreviousPlayer](this);
-        public Players NextPlayer { get; }
-        public bool IsTerminal { get; }
+        IGridSquare<TState>[][] CurrentGame { get; }
+        int YLength => CurrentGame?.Length ?? -1;
+        int XLength => CurrentGame?[0]?.Length ?? -1;
+        //Players PreviousPlayer { get; set; }
+        //Players NextPlayer => GetNextPlayer[PreviousPlayer](this);
+        Players NextPlayer { get; }
+        bool IsTerminal { get; }        
+        IGridSquare<TState> this[int y, int x] { get; set; }
+
+        List<IGridBoard<TState>> GetChildren();
     }
 }
