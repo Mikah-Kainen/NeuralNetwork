@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
 {
-    public class Pair<TState> where TState : INetInput
+    public class Pair<TState> where TState : INetInputer
     {
         public IGridBoard<TState> Board { get; set; }
         public NeuralNet Net { get; set; }
@@ -22,7 +22,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
         }
     }
 
-    public static class TurnBasedBoardGameTrainer<TState> where TState : INetInput
+    public static class TurnBasedBoardGameTrainer<TState> where TState : INetInputer
     {
         
         public static NeuralNet LoadNet(string filePath)

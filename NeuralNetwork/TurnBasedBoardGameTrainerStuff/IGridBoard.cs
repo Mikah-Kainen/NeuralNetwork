@@ -6,7 +6,7 @@ using static NeuralNetwork.TurnBasedBoardGameTrainerStuff.Enums;
 
 namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
 {
-    public interface IGridBoard<TState> where TState : INetInput
+    public interface IGridBoard<TState> where TState : INetInputer
     {
         IGridSquare<TState>[][] CurrentGame { get; }
         int YLength => CurrentGame?.Length ?? -1;

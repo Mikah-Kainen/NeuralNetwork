@@ -4,8 +4,8 @@ using System.Text;
 
 namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
 {
-    public interface INetInput
+    public interface INetInputer
     {
-        public double[] Inputs { get; }
+        public double[] NetInputs { get; }
     }
 }
