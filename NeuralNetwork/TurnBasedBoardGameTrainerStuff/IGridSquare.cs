@@ -10,6 +10,6 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
     {
         TState State { get; set; }
         Players Owner { get; set; }
-        Func<IGridSquare<TState>, int> WasActivated { get; }
+        Action<IGridSquare<TState>> WasActivated { get; }
     }
 }
