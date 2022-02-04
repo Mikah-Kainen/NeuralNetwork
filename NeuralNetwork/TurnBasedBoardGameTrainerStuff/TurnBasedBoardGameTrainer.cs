@@ -7,13 +7,15 @@ using Newtonsoft.Json;
 
 namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
 {
-    public class Pair<TState> where TState : INetInputer
+    public class Pair<TState, TSquare>
+        where TState : INetInputer
+        where TSquare : IGridSquare<TState> 
     {
-        public IGridBoard<TState> Board { get; set; }
+        public IGridBoard<TState, TSquare> Board { get; set; }
         public NeuralNet Net { get; set; }
         public int Success { get; set; }
         public bool IsAlive { get; set; }
-        public Pair(IGridBoard<TState> board, NeuralNet net)
+        public Pair(IGridBoard<TState, TSquare> board, NeuralNet net)
         {
             Board = board;
             Net = net;
@@ -22,7 +24,9 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
         }
     }
 
-    public static class TurnBasedBoardGameTrainer<TState> where TState : INetInputer
+    public static class TurnBasedBoardGameTrainer<TState, TSquare> 
+        where TState : INetInputer
+        where TSquare : IGridSquare<TState>
     {
         
         public static NeuralNet LoadNet(string filePath)
@@ -47,7 +51,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
             return result;
         }
 
-        public static NeuralNet GetNet(IGridBoard<TState> completeGame, int numberOfSimulations, int numberOfGenerations, Random random)
+        public static NeuralNet GetNet(IGridBoard<TState, TSquare> completeGame, int numberOfSimulations, int numberOfGenerations, Random random)
         {
             int[] neuronsPerLayer = new int[]
             {
@@ -57,12 +61,12 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
                 4,
                 completeGame.YLength * completeGame.XLength,
             };
-            List<Pair<TState>> pairs = new List<Pair<TState>>();
+            List<Pair<TState, TSquare>> pairs = new List<Pair<TState, TSquare>>();
             for (int i = 0; i < numberOfSimulations; i++)
             {
                 NeuralNet pairNet = new NeuralNet(ErrorFunctions.MeanSquared, ActivationFunctions.BinaryStep, neuronsPerLayer);
                 pairNet.Randomize(random, -1, 1);
-                pairs.Add(new Pair<TState>(completeGame, pairNet));
+                pairs.Add(new Pair<TState, TSquare>(completeGame, pairNet));
             }
             NeuralNet best = null;
             for (int i = 0; i < numberOfGenerations; i++)
@@ -73,7 +77,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
         }
         //int correctCount = 0;
 
-        private static NeuralNet Train(List<Pair<TState>> pairs, Random random, double preservePercent, double randomizePercent, double mutationMin, double mutationMax, double randomizeMin, double randomizeMax)
+        private static NeuralNet Train(List<Pair<TState, TSquare>> pairs, Random random, double preservePercent, double randomizePercent, double mutationMin, double mutationMax, double randomizeMin, double randomizeMax)
         //preservePercent => percent of population to save, randomizePercent => percent of population to randomize, mutationRange => multiply mutations by a random value between positive and negative mutationRange
         {
             bool IsThereBoardAlive = true;
@@ -84,7 +88,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
                     IsThereBoardAlive = MakeMove(pairs[i]);
                 }
             }
-            pairs = pairs.OrderByDescending<Pair<TState>, int>((Pair<TState> current) => current.Success).ToList();
+            pairs = pairs.OrderByDescending<Pair<TState, TSquare>, int>((Pair<TState, TSquare> current) => current.Success).ToList();
 
             int preserveCutoff = (int)(pairs.Count * preservePercent / 100);
             int randomizeCutoff = (int)(pairs.Count * (100 - randomizePercent) / 100);
@@ -120,7 +124,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
             return pairs[0].Net;
         }
 
-        private static bool MakeMove(Pair<TState> currentPair)
+        private static bool MakeMove(Pair<TState, TSquare> currentPair)
         {
             bool returnValue = false;
             if (currentPair.IsAlive)
@@ -177,7 +181,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
                 //    currentPair.IsAlive = false;
                 //    goto deathZone;
                 //}
-                List<IGridBoard<TState>> children = currentPair.Board.GetChildren();
+                List<IGridBoard<TState, TSquare>> children = currentPair.Board.GetChildren();
                 for (int z = 0; z < children.Count; z++)
                 {
                     //if (children[z][yVal, xVal] == currentPair.Board.NextPlayer)

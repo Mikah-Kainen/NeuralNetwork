@@ -19,6 +19,6 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
         bool IsTerminal { get; }        
         TSquare this[int y, int x] { get; set; }
 
-        List<IGridBoard<TState>> GetChildren();
+        List<IGridBoard<TState, TSquare>> GetChildren();
     }
 }
