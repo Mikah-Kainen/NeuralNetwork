@@ -10,6 +10,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
         where TState : INetInputer 
         where TSquare : IGridSquare<TState>
     {
+        bool test { get; set; }
         TSquare[][] CurrentGame { get; }
         //int YLength => CurrentGame?.Length ?? -1;
         //int XLength => CurrentGame?[0]?.Length ?? -1;
