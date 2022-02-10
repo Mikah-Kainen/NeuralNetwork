@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-using static NeuralNetwork.TurnBasedBoardGameTrainerStuff.Enums;
+using NeuralNetwork.TurnBasedBoardGameTrainerStuff.Enums;
 
 namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
 {

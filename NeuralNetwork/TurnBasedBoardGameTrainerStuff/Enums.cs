@@ -2,19 +2,16 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
+namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff.Enums
 {
-    public static class Enums
+    public enum Players
     {
-        public enum Players
-        {
-            None, 
-            Player1,
-            Player2,
-            Player3,
-            Player4,
-            Player5,
-        }
+        None,
+        Player1,
+        Player2,
+        Player3,
+        Player4,
+        Player5,
     }
 
 }
