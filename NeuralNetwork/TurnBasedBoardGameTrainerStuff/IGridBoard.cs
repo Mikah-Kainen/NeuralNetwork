@@ -11,8 +11,8 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
         where TSquare : IGridSquare<TState>
     {
         TSquare[][] CurrentGame { get; }
-        int YLength => CurrentGame?.Length ?? -1;
-        int XLength => CurrentGame?[0]?.Length ?? -1;
+        //int YLength => CurrentGame?.Length ?? -1;
+        //int XLength => CurrentGame?[0]?.Length ?? -1;
         Players PreviousPlayer { get; }
         Players NextPlayer => GetNextPlayer[PreviousPlayer](this);
         bool IsTerminal { get; }        
