@@ -52,6 +52,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
         }
 
         public static NeuralNet GetNet(IGridBoard<TState, TSquare> completeGame, int numberOfSimulations, int numberOfGenerations, Random random)
+            //This funtion trains a working Neural Net
         {
             int[] neuronsPerLayer = new int[]
             {
