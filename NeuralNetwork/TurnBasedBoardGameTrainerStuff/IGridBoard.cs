@@ -15,7 +15,8 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
         int XLength { get; }
         //Players PreviousPlayer { get; }
         Players NextPlayer { get; }
-        bool IsTerminal { get; }        
+        bool IsTerminal { get; }
+        Players GetWinner();
         TSquare this[int y, int x] { get; set; }
         //Dictionary<Players, Func<IGridBoard<TState, TSquare>, Players>> GetNextPlayer { get; }
         List<IGridBoard<TState, TSquare>> GetChildren();
