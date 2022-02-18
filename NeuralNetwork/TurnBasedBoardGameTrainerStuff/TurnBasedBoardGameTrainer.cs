@@ -29,7 +29,6 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
         where TState : INetInputer
         where TSquare : IGridSquare<TState>
     {
-        
         public static NeuralNet LoadNet(string filePath)
         //this function loads and builds a NeuralNetwork saved in json format. The Inputs are not set in this function
         {
