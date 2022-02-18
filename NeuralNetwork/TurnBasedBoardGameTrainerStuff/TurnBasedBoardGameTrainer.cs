@@ -4,7 +4,7 @@ using System.Text;
 
 using System.Linq;
 using Newtonsoft.Json;
-using static NeuralNetwork.TurnBasedBoardGameTrainerStuff.Enums;
+using NeuralNetwork.TurnBasedBoardGameTrainerStuff.Enums;
 
 namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
 {
