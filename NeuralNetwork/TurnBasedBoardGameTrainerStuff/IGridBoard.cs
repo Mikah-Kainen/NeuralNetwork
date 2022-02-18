@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-using static NeuralNetwork.TurnBasedBoardGameTrainerStuff.Enums;
+using NeuralNetwork.TurnBasedBoardGameTrainerStuff.Enums;
 
 namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
 {
@@ -11,14 +11,14 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
         where TSquare : IGridSquare<TState>
     {
         TSquare[][] CurrentGame { get; }
-        int YLength => CurrentGame?.Length ?? -1;
-        int XLength => CurrentGame?[0]?.Length ?? -1;
-        //Players PreviousPlayer { get; set; }
-        //Players NextPlayer => GetNextPlayer[PreviousPlayer](this);
+        int YLength { get; }
+        int XLength { get; }
+        //Players PreviousPlayer { get; }
         Players NextPlayer { get; }
-        bool IsTerminal { get; }        
+        bool IsTerminal { get; }
+        Players GetWinner();
         TSquare this[int y, int x] { get; set; }
-
+        //Dictionary<Players, Func<IGridBoard<TState, TSquare>, Players>> GetNextPlayer { get; }
         List<IGridBoard<TState, TSquare>> GetChildren();
     }
 }

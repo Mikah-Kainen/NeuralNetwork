@@ -1,4 +1,7 @@
-﻿using System;
+﻿using NeuralNetwork.TurnBasedBoardGameTrainerStuff;
+using NeuralNetwork.TurnBasedBoardGameTrainerStuff.Enums;
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 
