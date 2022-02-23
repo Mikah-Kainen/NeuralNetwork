@@ -8,9 +8,9 @@ using NeuralNetwork.TurnBasedBoardGameTrainerStuff.Enums;
 
 namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
 {
-    //public delegate bool MyFunc<TState, TSquare>(Pair<TState, TSquare> pair, ref int myInt)
-    //    where TState : INetInputer
-    //    where TSquare : IGridSquare<TState>;
+    public delegate bool MyFunc<TState, TSquare>(Pair<TState, TSquare> pair, ref int myInt)
+        where TState : INetInputer
+        where TSquare : IGridSquare<TState>;
 
     //class ExampleDemoThingie
     //{
@@ -82,7 +82,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
             return result;
         }
 
-        public NeuralNet GetNet(IGridBoard<TState, TSquare> rootState, Func<Pair<TState, TSquare>, int, bool> makeMove, int numberOfSimulations, int numberOfGenerations, Random random)
+        public NeuralNet GetNet(IGridBoard<TState, TSquare> rootState, MyFunc<TState, TSquare> makeMove, int numberOfSimulations, int numberOfGenerations, Random random)
         {
             int[] neuronsPerLayer = new int[]
             {
@@ -109,7 +109,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
 
         //int correctCount = 0;
 
-        private NeuralNet Train(List<Pair<TState, TSquare>> pairs, Func<Pair<TState, TSquare>, int, bool> makeMove, Random random, double preservePercent, double randomizePercent, double mutationMin, double mutationMax, double randomizeMin, double randomizeMax)
+        private NeuralNet Train(List<Pair<TState, TSquare>> pairs, MyFunc<TState, TSquare> makeMove, Random random, double preservePercent, double randomizePercent, double mutationMin, double mutationMax, double randomizeMin, double randomizeMax)
         //preservePercent => percent of population to save, randomizePercent => percent of population to randomize, mutationRange => multiply mutations by a random value between positive and negative mutationRange
         {
             bool IsThereBoardAlive = true;
@@ -117,7 +117,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
             {
                 for (int i = 0; i < pairs.Count; i++)
                 {
-                    IsThereBoardAlive = makeMove(pairs[i], totalCorrect);
+                    IsThereBoardAlive = makeMove(pairs[i], ref totalCorrect);
                 }
             }
             pairs = pairs.OrderByDescending<Pair<TState, TSquare>, int>((Pair<TState, TSquare> current) => current.Success).ToList();
