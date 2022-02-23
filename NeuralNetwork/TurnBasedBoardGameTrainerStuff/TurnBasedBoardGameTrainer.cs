@@ -8,6 +8,35 @@ using NeuralNetwork.TurnBasedBoardGameTrainerStuff.Enums;
 
 namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
 {
+    //public delegate bool MyFunc<TState, TSquare>(Pair<TState, TSquare> pair, ref int myInt)
+    //    where TState : INetInputer
+    //    where TSquare : IGridSquare<TState>;
+
+    //class ExampleDemoThingie
+    //{
+    //    bool Test<TState, TSquare>(MyFunc<TState, TSquare> myFunc)
+    //        where TState : INetInputer
+    //        where TSquare : IGridSquare<TState>
+    //    {
+    //        int a = 3;
+    //        return myFunc(null, ref a);
+    //    }
+
+
+    //    void CallTest<TState, TSquare>()
+    //        where TState : INetInputer
+    //        where TSquare : IGridSquare<TState>
+    //    {
+    //        var result = Test<TState, TSquare>((pair, ref a) =>
+    //        {
+    //            a++;
+    //            return a > 3;
+    //        });
+    //    }
+
+
+    //}
+
     public class Pair<TState, TSquare>
         where TState : INetInputer
         where TSquare : IGridSquare<TState> 
@@ -25,10 +54,12 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
         }
     }
 
-    public static class TurnBasedBoardGameTrainer<TState, TSquare> 
+    public class TurnBasedBoardGameTrainer<TState, TSquare> 
         where TState : INetInputer
         where TSquare : IGridSquare<TState>
     {
+        private int totalCorrect = 0;
+
         public static NeuralNet LoadNet(string filePath)
         //this function loads and builds a NeuralNetwork saved in json format. The Inputs are not set in this function
         {
@@ -51,7 +82,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
             return result;
         }
 
-        public static NeuralNet GetNet(IGridBoard<TState, TSquare> rootState, Func<Pair<TState, TSquare>, int, bool> makeMove, ref int currentCorrect, int numberOfSimulations, int numberOfGenerations, Random random)
+        public NeuralNet GetNet(IGridBoard<TState, TSquare> rootState, Func<Pair<TState, TSquare>, int, bool> makeMove, int numberOfSimulations, int numberOfGenerations, Random random)
         {
             int[] neuronsPerLayer = new int[]
             {
@@ -71,14 +102,14 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
             NeuralNet best = null;
             for (int i = 0; i < numberOfGenerations; i++)
             {
-                best = Train(pairs, makeMove, ref currentCorrect, random, 10, 10, 0.5f, 1.5f, -1, 1);
+                best = Train(pairs, makeMove, random, 10, 10, 0.5f, 1.5f, -1, 1);
             }
             return best;
         }
 
         //int correctCount = 0;
 
-        private static NeuralNet Train(List<Pair<TState, TSquare>> pairs, Func<Pair<TState, TSquare>, int, bool> makeMove, ref int currentCorrect, Random random, double preservePercent, double randomizePercent, double mutationMin, double mutationMax, double randomizeMin, double randomizeMax)
+        private NeuralNet Train(List<Pair<TState, TSquare>> pairs, Func<Pair<TState, TSquare>, int, bool> makeMove, Random random, double preservePercent, double randomizePercent, double mutationMin, double mutationMax, double randomizeMin, double randomizeMax)
         //preservePercent => percent of population to save, randomizePercent => percent of population to randomize, mutationRange => multiply mutations by a random value between positive and negative mutationRange
         {
             bool IsThereBoardAlive = true;
@@ -86,7 +117,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
             {
                 for (int i = 0; i < pairs.Count; i++)
                 {
-                    IsThereBoardAlive = makeMove(pairs[i], currentCorrect);
+                    IsThereBoardAlive = makeMove(pairs[i], totalCorrect);
                 }
             }
             pairs = pairs.OrderByDescending<Pair<TState, TSquare>, int>((Pair<TState, TSquare> current) => current.Success).ToList();
