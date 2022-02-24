@@ -59,10 +59,13 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
         where TSquare : IGridSquare<TState>
     {
         public int TotalCorrect;
+        public List<int> GenerationalCorrect;
 
         public TurnBasedBoardGameTrainer()
         {
             TotalCorrect = 0;
+            GenerationalCorrect = new List<int>();
+            GenerationalCorrect.Add(0);
         }
 
         public static NeuralNet LoadNet(string filePath)
@@ -157,7 +160,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
 
                 }
             }
-
+            GenerationalCorrect.Insert(0, TotalCorrect - GenerationalCorrect[0]);
             return pairs[0].Net;
         }
     }
