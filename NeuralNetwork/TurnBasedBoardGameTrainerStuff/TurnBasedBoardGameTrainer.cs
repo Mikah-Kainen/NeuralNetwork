@@ -58,7 +58,12 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
         where TState : INetInputer
         where TSquare : IGridSquare<TState>
     {
-        private int totalCorrect = 0;
+        public int TotalCorrect;
+
+        public TurnBasedBoardGameTrainer()
+        {
+            TotalCorrect = 0;
+        }
 
         public static NeuralNet LoadNet(string filePath)
         //this function loads and builds a NeuralNetwork saved in json format. The Inputs are not set in this function
@@ -117,7 +122,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
             {
                 for (int i = 0; i < pairs.Count; i++)
                 {
-                    IsThereBoardAlive = makeMove(pairs[i], ref totalCorrect);
+                    IsThereBoardAlive = makeMove(pairs[i], ref TotalCorrect);
                 }
             }
             pairs = pairs.OrderByDescending<Pair<TState, TSquare>, int>((Pair<TState, TSquare> current) => current.Success).ToList();
