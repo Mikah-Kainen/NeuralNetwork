@@ -65,7 +65,6 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
         {
             TotalCorrect = 0;
             GenerationalCorrect = new List<int>();
-            GenerationalCorrect.Add(0);
         }
 
         public static NeuralNet LoadNet(string filePath)
@@ -120,6 +119,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
         private NeuralNet Train(List<Pair<TState, TSquare>> pairs, MyFunc<TState, TSquare> makeMove, Random random, double preservePercent, double randomizePercent, double mutationMin, double mutationMax, double randomizeMin, double randomizeMax)
         //preservePercent => percent of population to save, randomizePercent => percent of population to randomize, mutationRange => multiply mutations by a random value between positive and negative mutationRange
         {
+            int startingCorrect = TotalCorrect;
             bool IsThereBoardAlive = true;
             while (IsThereBoardAlive)
             {
@@ -160,7 +160,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
 
                 }
             }
-            GenerationalCorrect.Insert(0, TotalCorrect - GenerationalCorrect[0]);
+            GenerationalCorrect.Insert(0, TotalCorrect - startingCorrect);
             return pairs[0].Net;
         }
     }
