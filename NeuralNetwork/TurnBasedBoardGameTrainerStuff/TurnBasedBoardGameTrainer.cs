@@ -8,7 +8,7 @@ using NeuralNetwork.TurnBasedBoardGameTrainerStuff.Enums;
 
 namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
 {
-    public delegate (bool isThereAnotherMove, TReturnStats moveStats) MyFunc<TState, TSquare, TReturnStats>(BoardNetPair<TState, TSquare> pair, ref int myInt)
+    public delegate (bool isThereAnotherMove, TReturnStats moveStats) MyFunc<TState, TSquare, TReturnStats>(BoardNetPair<TState, TSquare> pair, Random random)
         where TState : INetInputer
         where TSquare : IGridSquare<TState>;
 
@@ -52,18 +52,14 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
         }
     }
 
-    public class TurnBasedBoardGameTrainer<TState, TSquare, TRunStats>
+    public class TurnBasedBoardGameTrainer<TState, TSquare, TMoveStats>
         where TState : INetInputer
         where TSquare : IGridSquare<TState>
     {
-        public int TotalCorrect;
-        public List<int> GenerationalCorrect;
-        public List<TRunStats>[][] RunStats;
+        public List<TMoveStats>[][] TrainingStats;
 
         public TurnBasedBoardGameTrainer()
         {
-            TotalCorrect = 0;
-            GenerationalCorrect = new List<int>();
         }
 
         public static NeuralNet LoadNet(string filePath)
@@ -88,15 +84,15 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
             return result;
         }
 
-        public NeuralNet GetNet(IGridBoard<TState, TSquare> rootState, MyFunc<TState, TSquare, TRunStats> makeMove, int numberOfSimulations, int numberOfGenerations, Random random)
+        public NeuralNet GetNet(IGridBoard<TState, TSquare> rootState, MyFunc<TState, TSquare, TMoveStats> makeMove, int numberOfSimulations, int numberOfGenerations, Random random)
         {
-            RunStats = new List<TRunStats>[numberOfGenerations][];
+            TrainingStats = new List<TMoveStats>[numberOfGenerations][];
             for(int i = 0; i < numberOfGenerations; i ++)
             {
-                RunStats[i] = new List<TRunStats>[numberOfSimulations];
+                TrainingStats[i] = new List<TMoveStats>[numberOfSimulations];
                 for(int r = 0; r < numberOfSimulations; r ++)
                 {
-                    RunStats[i][r] = new List<TRunStats>();
+                    TrainingStats[i][r] = new List<TMoveStats>();
                 }
             }
 
@@ -118,25 +114,24 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
             NeuralNet best = null;
             for (int i = 0; i < numberOfGenerations; i++)
             {
-                best = Train(pairs, makeMove, random, 10, 10, 0.5f, 1.5f, -1, 1);
+                best = Train(pairs, makeMove, i, random, 10, 10, 0.5f, 1.5f, -1, 1);
             }
             return best;
         }
 
-        //int correctCount = 0;
 
-        private NeuralNet Train(List<BoardNetPair<TState, TSquare>> pairs, MyFunc<TState, TSquare> makeMove, Random random, double preservePercent, double randomizePercent, double mutationMin, double mutationMax, double randomizeMin, double randomizeMax)
+        private NeuralNet Train(List<BoardNetPair<TState, TSquare>> pairs, MyFunc<TState, TSquare, TMoveStats> makeMove, int currentGeneration, Random random, double preservePercent, double randomizePercent, double mutationMin, double mutationMax, double randomizeMin, double randomizeMax)
         //preservePercent => percent of population to save, randomizePercent => percent of population to randomize, mutationRange => multiply mutations by a random value between positive and negative mutationRange
         {
-            int startingCorrect = TotalCorrect;
-            bool IsTherePossibleMove = true;
 
             for (int i = 0; i < pairs.Count; i++)
             {
-                while (IsTherePossibleMove)
+                bool isTherePossibleMove = !pairs[i].Board.IsTerminal;
+                while (isTherePossibleMove)
                 {
-                    (bool, int, int, int) info = makeMove(pairs[i], ref TotalCorrect);
-                    IsTherePossibleMove = info.Item1;
+                    (bool isTherePossibleMove, TMoveStats currentStats) moveInfo = makeMove(pairs[i], random);
+                    isTherePossibleMove = moveInfo.isTherePossibleMove;
+                    TrainingStats[currentGeneration][i].Add(moveInfo.currentStats);
                 }
             }
             pairs = pairs.OrderByDescending<BoardNetPair<TState, TSquare>, int>((BoardNetPair<TState, TSquare> current) => current.Success).ToList();
@@ -171,7 +166,6 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
 
                 }
             }
-            GenerationalCorrect.Insert(0, TotalCorrect - startingCorrect);
             return pairs[0].Net;
         }
     }
