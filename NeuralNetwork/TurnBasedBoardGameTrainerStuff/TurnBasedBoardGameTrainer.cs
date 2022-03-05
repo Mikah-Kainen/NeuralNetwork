@@ -8,7 +8,7 @@ using NeuralNetwork.TurnBasedBoardGameTrainerStuff.Enums;
 
 namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
 {
-    public delegate (bool isThereAnotherMove, TReturnStats moveStats) MyFunc<TState, TSquare, TReturnStats>(BoardNetPair<TState, TSquare> pair, Random random)
+    public delegate TReturnStats MyFunc<TState, TSquare, TReturnStats>(BoardNetPair<TState, TSquare> pair, Random random)
         where TState : INetInputer
         where TSquare : IGridSquare<TState>;
 
@@ -42,13 +42,11 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
         public IGridBoard<TState, TSquare> Board { get; set; }
         public NeuralNet Net { get; set; }
         public int Success { get; set; }
-        public bool IsAlive { get; set; }
         public BoardNetPair(IGridBoard<TState, TSquare> board, NeuralNet net)
         {
             Board = board;
             Net = net;
             Success = 0;
-            IsAlive = true;
         }
     }
 
@@ -109,11 +107,15 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
             {
                 NeuralNet pairNet = new NeuralNet(ErrorFunctions.MeanSquared, ActivationFunctions.BinaryStep, neuronsPerLayer);
                 pairNet.Randomize(random, -1, 1);
-                pairs.Add(new BoardNetPair<TState, TSquare>(rootState, pairNet));
+                pairs.Add(new BoardNetPair<TState, TSquare>(rootState.Clone(), pairNet));
             }
             NeuralNet best = null;
             for (int i = 0; i < numberOfGenerations; i++)
             {
+                for(int z = 0; z < numberOfSimulations; z ++)
+                {
+                    pairs[z].Board.SetCurrentGame(rootState.CurrentBoard);
+                }
                 best = Train(pairs, makeMove, i, random, 10, 10, 0.5f, 1.5f, -1, 1);
             }
             return best;
@@ -122,49 +124,33 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
 
         private NeuralNet Train(List<BoardNetPair<TState, TSquare>> pairs, MyFunc<TState, TSquare, TMoveStats> makeMove, int currentGeneration, Random random, double preservePercent, double randomizePercent, double mutationMin, double mutationMax, double randomizeMin, double randomizeMax)
         //preservePercent => percent of population to save, randomizePercent => percent of population to randomize, mutationRange => multiply mutations by a random value between positive and negative mutationRange
+        //Train only changes the nets of the pairs it doesn't reset the boards. Boards must be reset before Train function is called
         {
 
             for (int i = 0; i < pairs.Count; i++)
             {
-                bool isTherePossibleMove = !pairs[i].Board.IsTerminal;
-                while (isTherePossibleMove)
+                while (!pairs[i].Board.IsTerminal)
                 {
-                    (bool isTherePossibleMove, TMoveStats currentStats) moveInfo = makeMove(pairs[i], random);
-                    isTherePossibleMove = moveInfo.isTherePossibleMove;
-                    TrainingStats[currentGeneration][i].Add(moveInfo.currentStats);
+                    TMoveStats currentStats = makeMove(pairs[i], random);
+                    TrainingStats[currentGeneration][i].Add(currentStats);
                 }
             }
             pairs = pairs.OrderByDescending<BoardNetPair<TState, TSquare>, int>((BoardNetPair<TState, TSquare> current) => current.Success).ToList();
 
             int preserveCutoff = (int)(pairs.Count * preservePercent / 100);
             int randomizeCutoff = (int)(pairs.Count * (100 - randomizePercent) / 100);
-            for (int i = 0; i < preserveCutoff; i++)
-            {
-                pairs[i].IsAlive = true;
-                if (pairs[i].Net.Layers[3].Neurons[0].Bias == 0)
-                {
-
-                }
-            }
+            //for (int i = 0; i < preserveCutoff; i++)
+            //{
+            //}
             for (int i = preserveCutoff; i < randomizeCutoff; i++)
             {
                 int parent = random.Next(0, preserveCutoff);
                 pairs[i].Net.Cross(pairs[parent].Net, random);
                 pairs[i].Net.Mutate(random, mutationMin, mutationMax);
-                pairs[i].IsAlive = true;
-                if (pairs[i].Net.Layers[3].Neurons[0].Bias == 0)
-                {
-
-                }
             }
             for (int i = randomizeCutoff; i < pairs.Count; i++)
             {
                 pairs[i].Net.Randomize(random, randomizeMin, randomizeMax);
-                pairs[i].IsAlive = true;
-                if (pairs[i].Net.Layers[3].Neurons[0].Bias == 0)
-                {
-
-                }
             }
             return pairs[0].Net;
         }

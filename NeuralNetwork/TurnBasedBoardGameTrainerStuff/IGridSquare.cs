@@ -8,7 +8,9 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
 {
     public interface IGridSquare<TState> where TState : INetInputer
     {
-        TState State { get; set; }
+        TState State { get; }
         Action<IGridSquare<TState>> WasActivated { get; }
+
+        public void SetState(TState targetState);
     }
 }

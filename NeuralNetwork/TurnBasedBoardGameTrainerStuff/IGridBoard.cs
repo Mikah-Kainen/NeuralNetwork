@@ -10,7 +10,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
         where TState : INetInputer 
         where TSquare : IGridSquare<TState>
     {
-        TSquare[][] CurrentGame { get; }
+        TSquare[][] CurrentBoard { get; }
         int YLength { get; }
         int XLength { get; }
         //Players PreviousPlayer { get; }
@@ -20,5 +20,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
         TSquare this[int y, int x] { get; set; }
         //Dictionary<Players, Func<IGridBoard<TState, TSquare>, Players>> GetNextPlayer { get; }
         List<IGridBoard<TState, TSquare>> GetChildren();
+        void SetCurrentGame(TSquare[][] targetBoard);
+        IGridBoard<TState, TSquare> Clone();
     }
 }
