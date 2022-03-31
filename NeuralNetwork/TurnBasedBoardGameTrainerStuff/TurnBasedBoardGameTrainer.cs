@@ -126,7 +126,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
             {
                 for(int z = 0; z < numberOfSimulations; z ++)
                 {
-                    pairs[z].Board.SetCurrentGame(rootState.CurrentBoard);
+                    pairs[z].Board.SetCurrentGame(rootState.CurrentBoard, Players.None);
                 }
                 best = Train(pairs, opponentMoveMap, neuralNetPlayer, makeMove, i, random, 10, 10, 0.5f, 1.5f, -1, 1);
             }

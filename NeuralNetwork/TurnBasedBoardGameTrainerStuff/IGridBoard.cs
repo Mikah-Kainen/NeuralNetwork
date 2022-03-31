@@ -20,7 +20,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
         TSquare this[int y, int x] { get; set; }
         //Dictionary<Players, Func<IGridBoard<TState, TSquare>, Players>> GetNextPlayer { get; }
         List<IGridBoard<TState, TSquare>> GetChildren();
-        void SetCurrentGame(TSquare[][] targetBoard);
+        void SetCurrentGame(TSquare[][] targetBoard, Players previousPlayer);
         IGridBoard<TState, TSquare> Clone();
     }
 }
