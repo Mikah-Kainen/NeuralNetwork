@@ -134,12 +134,15 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
         }
 
 
+        public event EventHandler<IGridBoard<TState, TSquare>> BoardDied;
+
         private NeuralNet Train(List<BoardNetPair<TState, TSquare>> pairs, Dictionary<Players, Func<IGridBoard<TState, TSquare>, Random, IGridBoard<TState, TSquare>>> opponentMoveMap, Players neuralNetPlayer, MyFunc<TState, TSquare, TMoveStats> makeMove/*, Action<TSquare[][], Random>[] makeOpponentMove*/, int currentGeneration, Random random, double preservePercent, double randomizePercent, double mutationMin, double mutationMax, double randomizeMin, double randomizeMax)
         //preservePercent => percent of population to save, randomizePercent => percent of population to randomize, mutationRange => multiply mutations by a random value between positive and negative mutationRange
         //Train only changes the nets of the pairs it doesn't reset the boards. Boards must be reset before Train function is called
         {
             for (int i = 0; i < pairs.Count; i++)
             {
+                int movesDone = 0;
                 while (!pairs[i].Board.IsTerminal)
                 {
                     if (pairs[i].Board.NextPlayer == neuralNetPlayer)
@@ -152,7 +155,9 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
                         //make the action into a func that returns the modified board
                         pairs[i].Board = opponentMoveMap[pairs[i].Board.NextPlayer](pairs[i].Board, random);
                     }
+                    movesDone++;
                 }
+                BoardDied?.Invoke(this, pairs[i].Board);
             }
 
             pairs = pairs.OrderByDescending<BoardNetPair<TState, TSquare>, int>((BoardNetPair<TState, TSquare> current) => current.Success).ToList();
