@@ -6,7 +6,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff.Enums
 {
     public enum Players
     {
-        None,
+        None = 0,
         Player1,
         Player2,
         Player3,
