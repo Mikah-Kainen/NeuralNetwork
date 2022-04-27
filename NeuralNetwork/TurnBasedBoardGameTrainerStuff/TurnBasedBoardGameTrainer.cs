@@ -89,15 +89,17 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
             int[] neuronsPerLayer = new int[]
             {
                 rootState.YLength * rootState.XLength,
-                6,
-                4,
-                5,
-                rootState.YLength * rootState.XLength,
+                33,
+                33,
+                33,
+                33,
+                33, 
+                1,
             };
             List<BoardNetPair<TState, TSquare>> pairs = new List<BoardNetPair<TState, TSquare>>();
             for (int i = 0; i < numberOfSimulations; i++)
             {
-                NeuralNet pairNet = new NeuralNet(ErrorFunctions.MeanSquared, ActivationFunctions.BinaryStep, neuronsPerLayer);
+                NeuralNet pairNet = new NeuralNet(ErrorFunctions.MeanSquared, ActivationFunctions.Sigmoi, neuronsPerLayer);
                 pairNet.Randomize(random, -1, 1);
                 pairs.Add(new BoardNetPair<TState, TSquare>(rootState.Clone(), pairNet));
             }

@@ -14,6 +14,7 @@ namespace NeuralNetwork
         None = 0,
         Tanh = 1,
         BinaryStep = 2,
+        Sigmoid = 3,
     };
 
 }
