@@ -99,7 +99,7 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
             List<BoardNetPair<TState, TSquare>> pairs = new List<BoardNetPair<TState, TSquare>>();
             for (int i = 0; i < numberOfSimulations; i++)
             {
-                NeuralNet pairNet = new NeuralNet(ErrorFunctions.MeanSquared, ActivationFunctions.Sigmoi, neuronsPerLayer);
+                NeuralNet pairNet = new NeuralNet(ErrorFunctions.MeanSquared, ActivationFunctions.Sigmoid, neuronsPerLayer);
                 pairNet.Randomize(random, -1, 1);
                 pairs.Add(new BoardNetPair<TState, TSquare>(rootState.Clone(), pairNet));
             }
