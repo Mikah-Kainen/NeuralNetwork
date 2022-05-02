@@ -89,11 +89,9 @@ namespace NeuralNetwork.TurnBasedBoardGameTrainerStuff
             int[] neuronsPerLayer = new int[]
             {
                 rootState.YLength * rootState.XLength,
+                80,
                 33,
-                33,
-                33,
-                33,
-                33, 
+                80, 
                 1,
             };
             List<BoardNetPair<TState, TSquare>> pairs = new List<BoardNetPair<TState, TSquare>>();
